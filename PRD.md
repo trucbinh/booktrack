@@ -1,6 +1,6 @@
 # Ebook Library & Reading Habit Tracker
 
-A comprehensive digital library management system that helps users organize their ebook collection while tracking and building better reading habits through insightful analytics and goal setting.
+A comprehensive digital library management system that helps users organize their ebook collection while tracking and building better reading habits through insightful analytics and goal setting. Each user has their own secure account with personalized book collections and reading data.
 
 **Experience Qualities**:
 1. **Organized** - Clean categorization and search makes finding books effortless
@@ -8,9 +8,16 @@ A comprehensive digital library management system that helps users organize thei
 3. **Insightful** - Analytics reveal reading patterns and help optimize habits
 
 **Complexity Level**: Light Application (multiple features with basic state)
-- Manages book collections, reading progress, and habit tracking with persistent data storage
+- Manages user authentication, book collections, reading progress, and habit tracking with persistent data storage
 
 ## Essential Features
+
+### User Authentication & Registration
+- **Functionality**: Secure user registration and login system with password validation
+- **Purpose**: Protect user data and enable personalized book collections
+- **Trigger**: User visits app without authentication or clicks sign up/login
+- **Progression**: Registration form → Validation → Account creation → Auto-login → Dashboard
+- **Success criteria**: Users can create accounts, login securely, and access only their data
 
 ### Book Library Management
 - **Functionality**: Add, edit, delete, and organize ebooks with metadata (title, author, genre, cover, page count)
@@ -46,6 +53,8 @@ A comprehensive digital library management system that helps users organize thei
 - **Goal Failure**: Supportive messaging with streak recovery options
 - **Invalid Book Data**: Form validation with helpful error messages
 - **Long Book Titles**: Text truncation with hover tooltips for full content
+- **Authentication Errors**: Clear error messages for login/registration failures
+- **Data Isolation**: User data is completely separated and secure
 
 ## Design Direction
 The design should feel literary and sophisticated yet approachable - think modern bookstore meets personal study space with warm, inviting colors that encourage prolonged reading sessions.
@@ -79,9 +88,9 @@ Subtle, book-inspired animations that feel organic and literary - page-turn effe
 - **Hierarchy of Movement**: Book cards get subtle lift on hover, progress bars animate smoothly, page transitions use gentle slides
 
 ## Component Selection
-- **Components**: Cards for book display, Progress bars for reading tracking, Badges for genres/status, Forms for book entry, Tabs for navigation sections, Dialogs for book details, Charts for analytics using recharts
-- **Customizations**: Custom book card component with cover image display, reading progress overlay, and status indicators
-- **States**: Hover states with gentle elevation, active reading status with warm glow, completed books with success styling
-- **Icon Selection**: Book icons for library, target for goals, chart-line for analytics, plus for adding books, bookmark for current reading
+- **Components**: Cards for book display, Progress bars for reading tracking, Badges for genres/status, Forms for book entry and authentication, Tabs for navigation sections, Dialogs for book details, Charts for analytics using recharts, Avatar and dropdown for user menu
+- **Customizations**: Custom book card component with cover image display, reading progress overlay, and status indicators. Authentication forms with password visibility toggles and validation feedback
+- **States**: Hover states with gentle elevation, active reading status with warm glow, completed books with success styling, loading states for authentication
+- **Icon Selection**: Book icons for library, target for goals, chart-line for analytics, plus for adding books, bookmark for current reading, user and sign-out for authentication
 - **Spacing**: Consistent 4-unit spacing (16px) between major elements, 2-unit (8px) for related items, 6-unit (24px) for section separation
 - **Mobile**: Single column layout on mobile with collapsible navigation, touch-friendly buttons (44px minimum), horizontal scroll for book carousels

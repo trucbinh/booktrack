@@ -11,10 +11,11 @@ import { GENRES, generateBookId } from '@/lib/utils-books';
 
 interface AddBookDialogProps {
   onAdd: (book: Book) => void;
+  userId: string;
   trigger?: React.ReactNode;
 }
 
-export function AddBookDialog({ onAdd, trigger }: AddBookDialogProps) {
+export function AddBookDialog({ onAdd, userId, trigger }: AddBookDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -34,6 +35,7 @@ export function AddBookDialog({ onAdd, trigger }: AddBookDialogProps) {
 
     const newBook: Book = {
       id: generateBookId(),
+      userId,
       title: formData.title,
       author: formData.author,
       genre: formData.genre,

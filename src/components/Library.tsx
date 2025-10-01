@@ -14,9 +14,10 @@ interface LibraryProps {
   onAddBook: (book: Book) => void;
   onUpdateBook: (book: Book) => void;
   onAddSession: (session: any) => void;
+  userId: string;
 }
 
-export function Library({ books, onAddBook, onUpdateBook, onAddSession }: LibraryProps) {
+export function Library({ books, onAddBook, onUpdateBook, onAddSession, userId }: LibraryProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -43,7 +44,7 @@ export function Library({ books, onAddBook, onUpdateBook, onAddSession }: Librar
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">My Library</h1>
-          <AddBookDialog onAdd={onAddBook} />
+          <AddBookDialog onAdd={onAddBook} userId={userId} />
         </div>
 
         <div className="text-center py-16">
@@ -57,6 +58,7 @@ export function Library({ books, onAddBook, onUpdateBook, onAddSession }: Librar
           </p>
           <AddBookDialog 
             onAdd={onAddBook}
+            userId={userId}
             trigger={
               <button className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
                 Add Your First Book
@@ -72,7 +74,7 @@ export function Library({ books, onAddBook, onUpdateBook, onAddSession }: Librar
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Library</h1>
-        <AddBookDialog onAdd={onAddBook} />
+        <AddBookDialog onAdd={onAddBook} userId={userId} />
       </div>
 
       {/* Stats */}
@@ -158,6 +160,7 @@ export function Library({ books, onAddBook, onUpdateBook, onAddSession }: Librar
         onClose={() => setSelectedBook(null)}
         onUpdate={onUpdateBook}
         onAddSession={onAddSession}
+        userId={userId}
       />
     </div>
   );

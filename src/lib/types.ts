@@ -1,5 +1,6 @@
 export interface Book {
   id: string;
+  userId: string;
   title: string;
   author: string;
   genre: string;
@@ -16,6 +17,7 @@ export interface Book {
 
 export interface ReadingSession {
   id: string;
+  userId: string;
   bookId: string;
   date: string;
   pagesRead: number;
@@ -40,4 +42,24 @@ export interface ReadingStats {
   averagePagesPerDay: number;
   favoriteGenre: string;
   totalReadingTime: number; // in minutes
+}
+
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  createdAt: string;
+  preferences: {
+    dailyGoal: number;
+    theme: 'light' | 'dark';
+    notifications: boolean;
+  };
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 }

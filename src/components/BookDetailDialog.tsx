@@ -16,9 +16,10 @@ interface BookDetailDialogProps {
   onClose: () => void;
   onUpdate: (book: Book) => void;
   onAddSession: (session: ReadingSession) => void;
+  userId: string;
 }
 
-export function BookDetailDialog({ book, open, onClose, onUpdate, onAddSession }: BookDetailDialogProps) {
+export function BookDetailDialog({ book, open, onClose, onUpdate, onAddSession, userId }: BookDetailDialogProps) {
   const [currentPage, setCurrentPage] = useState('');
   const [sessionTime, setSessionTime] = useState('');
   const [rating, setRating] = useState(0);
@@ -62,6 +63,7 @@ export function BookDetailDialog({ book, open, onClose, onUpdate, onAddSession }
     if (pagesRead > 0) {
       const session: ReadingSession = {
         id: generateSessionId(),
+        userId,
         bookId: book.id,
         date: new Date().toISOString(),
         pagesRead,
