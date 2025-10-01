@@ -47,6 +47,9 @@ export const createUser = (userData: {
   username: string;
   firstName: string;
   lastName: string;
+  authProvider?: 'email' | 'gmail';
+  avatar?: string;
+  googleId?: string;
 }): User => {
   return {
     id: generateUserId(),
@@ -55,6 +58,9 @@ export const createUser = (userData: {
     firstName: userData.firstName,
     lastName: userData.lastName,
     createdAt: new Date().toISOString(),
+    authProvider: userData.authProvider || 'email',
+    avatar: userData.avatar,
+    googleId: userData.googleId,
     preferences: {
       dailyGoal: 20,
       theme: 'light',

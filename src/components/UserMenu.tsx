@@ -9,8 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, SignOut, Gear } from '@phosphor-icons/react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { User, SignOut, Gear, GoogleLogo } from '@phosphor-icons/react';
 import { formatUserDisplayName } from '@/lib/auth';
 
 export const UserMenu: React.FC = () => {
@@ -26,6 +26,9 @@ export const UserMenu: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
+            {user.avatar && (
+              <AvatarImage src={user.avatar} alt={displayName} />
+            )}
             <AvatarFallback className="bg-primary text-primary-foreground">
               {initials}
             </AvatarFallback>
@@ -39,6 +42,12 @@ export const UserMenu: React.FC = () => {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {user.authProvider === 'gmail' && (
+              <p className="text-xs leading-none text-muted-foreground flex items-center gap-1">
+                <GoogleLogo size={12} />
+                Connected via Google
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

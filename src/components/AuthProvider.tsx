@@ -2,9 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { User, AuthState } from '@/lib/types';
 import { hashPassword, createUser } from '@/lib/auth';
+import { GmailAuthService } from '@/lib/gmail-auth';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithGmail: () => Promise<{ success: boolean; error?: string }>;
   register: (userData: {
     email: string;
     username: string;
@@ -42,12 +44,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
   }, []);
 
+  const loginWithGmail = async (): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const gmailService = GmailAuthService.getInstance();
+      const googleUser = await gmailService.initiateGoogleSignIn();
+      const userData = await gmailService.processGoogleUser(googleUser);
+
+      // Check if user already exists
+      const existingUser = Object.values(usersRecord).find(
+        entry => entry.user.email.toLowerCase() === userData.email.toLowerCase()
+      );
+
+      if (existingUser) {
+        // Update existing user with Google info if it's a Gmail auth
+        if (existingUser.user.authProvider === 'gmail' || existingUser.user.googleId === userData.googleId) {
+          setCurrentUserId(existingUser.user.id);
+          return { success: true };
+        } else {
+          return { success: false, error: 'An account with this email already exists. Please sign in with your password.' };
+        }
+      }
+
+      // Create new user
+      const newUser = createUser(userData);
+
+      setUsers(currentUsers => ({
+        ...(currentUsers || {}),
+        [newUser.id]: {
+          user: newUser,
+          hashedPassword: '' // No password for Gmail users
+        }
+      }));
+
+      setCurrentUserId(newUser.id);
+      return { success: true };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('cancelled')) {
+        return { success: false, error: 'Sign in was cancelled' };
+      }
+      return { success: false, error: 'Failed to sign in with Google. Please try again.' };
+    }
+  };
+
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const hashedPassword = await hashPassword(password);
     
     const userEntry = Object.values(usersRecord).find(
       entry => entry.user.email.toLowerCase() === email.toLowerCase() && 
-               entry.hashedPassword === hashedPassword
+               entry.hashedPassword === hashedPassword &&
+               entry.user.authProvider === 'email'
     );
 
     if (userEntry) {
@@ -128,6 +173,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: !!currentUser,
     isLoading,
     login,
+    loginWithGmail,
     register,
     logout,
     updateUser

@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { BookOpen, Eye, EyeSlash } from '@phosphor-icons/react';
+import { Separator } from '@/components/ui/separator';
+import { BookOpen, Eye, EyeSlash, GoogleLogo } from '@phosphor-icons/react';
 import { validateEmail } from '@/lib/auth';
 
 interface LoginFormProps {
@@ -13,13 +14,14 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
-  const { login } = useAuth();
+  const { login, loginWithGmail } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +29,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors.length > 0) {
       setErrors([]);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    setErrors([]);
+
+    try {
+      const result = await loginWithGmail();
+      
+      if (!result.success) {
+        setErrors([result.error || 'Google sign in failed']);
+      }
+    } catch (error) {
+      setErrors(['An unexpected error occurred with Google sign in. Please try again.']);
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -79,7 +98,37 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       </CardHeader>
       
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleLoading || isLoading}
+          >
+            {isGoogleLoading ? (
+              'Signing in with Google...'
+            ) : (
+              <>
+                <GoogleLogo size={20} className="mr-2" />
+                Continue with Google
+              </>
+            )}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <Separator className="w-full" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                Or continue with email
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {errors.length > 0 && (
             <Alert variant="destructive">
               <AlertDescription>
@@ -138,7 +187,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </Button>
@@ -151,7 +200,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:underline"
               onClick={onToggleMode}
-              disabled={isLoading}
+              disabled={isLoading || isGoogleLoading}
             >
               Create one here
             </Button>

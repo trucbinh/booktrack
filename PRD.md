@@ -1,96 +1,83 @@
-# Ebook Library & Reading Habit Tracker
+# BookVault Gmail Authentication - Product Requirements Document
 
-A comprehensive digital library management system that helps users organize their ebook collection while tracking and building better reading habits through insightful analytics and goal setting. Each user has their own secure account with personalized book collections and reading data.
+BookVault is a digital reading companion that helps users track their reading progress, manage their book library, and set reading goals with seamless Gmail authentication integration.
 
 **Experience Qualities**:
-1. **Organized** - Clean categorization and search makes finding books effortless
-2. **Motivating** - Progress tracking and achievements encourage consistent reading
-3. **Insightful** - Analytics reveal reading patterns and help optimize habits
+1. **Effortless** - Authentication should be as simple as a single click with Gmail integration
+2. **Trustworthy** - Users feel secure knowing their data is protected with Google's OAuth system  
+3. **Unified** - Consistent experience whether users choose Gmail or email/password authentication
 
 **Complexity Level**: Light Application (multiple features with basic state)
-- Manages user authentication, book collections, reading progress, and habit tracking with persistent data storage
+Gmail authentication adds convenience while maintaining the core reading tracking functionality without overwhelming complexity.
 
 ## Essential Features
 
-### User Authentication & Registration
-- **Functionality**: Secure user registration and login system with password validation
-- **Purpose**: Protect user data and enable personalized book collections
-- **Trigger**: User visits app without authentication or clicks sign up/login
-- **Progression**: Registration form → Validation → Account creation → Auto-login → Dashboard
-- **Success criteria**: Users can create accounts, login securely, and access only their data
+### Gmail OAuth Integration
+- **Functionality**: One-click sign in/up using Google accounts with automatic profile import
+- **Purpose**: Reduces friction and eliminates password management for users
+- **Trigger**: User clicks "Continue with Google" button on login or register screens
+- **Progression**: Button click → Google account selection modal → Automatic account creation/login → Dashboard access
+- **Success criteria**: Users can authenticate in under 10 seconds with their existing Google accounts
 
-### Book Library Management
-- **Functionality**: Add, edit, delete, and organize ebooks with metadata (title, author, genre, cover, page count)
-- **Purpose**: Central repository for digital book collection
-- **Trigger**: User clicks "Add Book" or imports book data
-- **Progression**: Book form → Fill details → Save → Appears in library grid
-- **Success criteria**: Books display correctly with all metadata and can be filtered/searched
+### Fallback Email Authentication  
+- **Functionality**: Traditional email/password registration and login for users preferring direct accounts
+- **Purpose**: Provides alternative for users who prefer not to use Google OAuth
+- **Trigger**: User chooses email option after Gmail option
+- **Progression**: Toggle email form → Fill credentials → Validation → Account creation/login
+- **Success criteria**: Both authentication methods work seamlessly with identical post-auth experience
 
-### Reading Progress Tracking
-- **Functionality**: Track current page, reading sessions, and completion percentage
-- **Purpose**: Visualize progress and maintain momentum
-- **Trigger**: User updates reading progress or starts new session
-- **Progression**: Select book → Update current page → View progress bar → Session logged
-- **Success criteria**: Progress accurately reflects reading state and displays visual feedback
-
-### Reading Goals & Habits
-- **Functionality**: Set daily/weekly/monthly reading targets and track streaks
-- **Purpose**: Build consistent reading habits through goal achievement
-- **Trigger**: User sets reading goal or completes daily target
-- **Progression**: Set goal → Track daily progress → View streak counter → Celebrate milestones
-- **Success criteria**: Goals are trackable, streaks calculate correctly, achievements unlock
-
-### Reading Analytics Dashboard
-- **Functionality**: Display reading statistics, time spent, books completed, favorite genres
-- **Purpose**: Provide insights into reading patterns and habits
-- **Trigger**: User navigates to analytics section
-- **Progression**: View dashboard → Analyze charts → Identify patterns → Adjust goals
-- **Success criteria**: Charts display accurate data and provide actionable insights
+### Unified User Profile Management
+- **Functionality**: Consistent user experience regardless of authentication method with avatar support
+- **Purpose**: Ensures feature parity between Gmail and email users
+- **Trigger**: User accesses profile or user menu
+- **Progression**: Profile access → Display user info with appropriate avatar → Settings management
+- **Success criteria**: Gmail users see their Google profile picture, all users have access to same features
 
 ## Edge Case Handling
-- **Empty Library**: Welcome screen with guided book addition process
-- **No Reading Progress**: Gentle prompts to start tracking with sample data
-- **Goal Failure**: Supportive messaging with streak recovery options
-- **Invalid Book Data**: Form validation with helpful error messages
-- **Long Book Titles**: Text truncation with hover tooltips for full content
-- **Authentication Errors**: Clear error messages for login/registration failures
-- **Data Isolation**: User data is completely separated and secure
+
+- **Cancelled Google Sign-in**: Graceful error message without breaking flow
+- **Existing Email Conflict**: Clear messaging when Gmail email matches existing email account  
+- **Network Failures**: Retry mechanisms and offline-friendly error states
+- **Demo Account Simulation**: Mock Google accounts for demonstration purposes
 
 ## Design Direction
-The design should feel literary and sophisticated yet approachable - think modern bookstore meets personal study space with warm, inviting colors that encourage prolonged reading sessions.
+
+The design should feel modern and trustworthy, evoking the reliability of established platforms like Google while maintaining BookVault's warm, literary aesthetic. Clean and minimal interface better serves the core reading focus without distracting from content.
 
 ## Color Selection
-Analogous warm color scheme creating a cozy, bookish atmosphere reminiscent of aged paper and leather-bound books.
 
-- **Primary Color**: Warm brown oklch(0.45 0.08 45) - represents leather book bindings and reliability
-- **Secondary Colors**: Cream oklch(0.92 0.02 75) for cards and soft backgrounds, Deep amber oklch(0.35 0.12 55) for accents
-- **Accent Color**: Golden orange oklch(0.65 0.15 65) for achievements, progress indicators, and call-to-action elements
+Analogous color scheme using warm, book-inspired tones that complement Google's blue accents.
+
+- **Primary Color**: Warm brown (`oklch(0.45 0.08 45)`) - Evokes leather-bound books and academic libraries
+- **Secondary Colors**: Cream backgrounds (`oklch(0.92 0.02 75)`) for comfortable reading surfaces  
+- **Accent Color**: Soft teal (`oklch(0.65 0.15 65)`) - Highlights important actions and Google integration elements
 - **Foreground/Background Pairings**: 
-  - Background (Cream #F5F2E8): Dark brown text oklch(0.25 0.05 45) - Ratio 8.2:1 ✓
-  - Card (White #FFFFFF): Dark brown text oklch(0.25 0.05 45) - Ratio 9.1:1 ✓
-  - Primary (Warm Brown): Cream text oklch(0.92 0.02 75) - Ratio 4.8:1 ✓
-  - Accent (Golden Orange): White text oklch(1 0 0) - Ratio 5.2:1 ✓
+  - Background (Cream #F5F3F0): Dark brown text (#3D2914) - Ratio 8.2:1 ✓
+  - Primary (Warm Brown #6B4423): Cream text (#F5F3F0) - Ratio 6.1:1 ✓  
+  - Accent (Soft Teal #5A9B8E): White text (#FFFFFF) - Ratio 4.8:1 ✓
 
 ## Font Selection
-Typography should convey literary sophistication with excellent readability for extended reading sessions - using Inter for its clean, modern characteristics balanced with warmth.
+
+Inter font family conveys modern professionalism while maintaining excellent readability across all interface elements and authentication flows.
 
 - **Typographic Hierarchy**: 
-  - H1 (App Title): Inter Bold/32px/tight letter spacing
-  - H2 (Section Headers): Inter SemiBold/24px/normal spacing  
-  - H3 (Book Titles): Inter Medium/18px/normal spacing
-  - Body (Descriptions): Inter Regular/16px/relaxed line height
-  - Small (Metadata): Inter Regular/14px/normal spacing
+  - H1 (Page Titles): Inter Bold/24px/tight letter spacing
+  - H2 (Card Titles): Inter Semibold/20px/normal spacing  
+  - Body (Form Labels): Inter Medium/14px/normal spacing
+  - Small (Helper Text): Inter Regular/12px/relaxed spacing
 
 ## Animations
-Subtle, book-inspired animations that feel organic and literary - page-turn effects for transitions and gentle hover states that don't distract from content consumption.
 
-- **Purposeful Meaning**: Page-flip transitions reinforce the reading metaphor while progress animations celebrate achievement
-- **Hierarchy of Movement**: Book cards get subtle lift on hover, progress bars animate smoothly, page transitions use gentle slides
+Subtle and functional animations that build trust during the authentication process without feeling playful or distracting from the serious nature of account security.
+
+- **Purposeful Meaning**: Loading states communicate progress, transitions maintain context during auth flows
+- **Hierarchy of Movement**: Google sign-in button deserves focus animation, form validation feedback uses micro-animations
 
 ## Component Selection
-- **Components**: Cards for book display, Progress bars for reading tracking, Badges for genres/status, Forms for book entry and authentication, Tabs for navigation sections, Dialogs for book details, Charts for analytics using recharts, Avatar and dropdown for user menu
-- **Customizations**: Custom book card component with cover image display, reading progress overlay, and status indicators. Authentication forms with password visibility toggles and validation feedback
-- **States**: Hover states with gentle elevation, active reading status with warm glow, completed books with success styling, loading states for authentication
-- **Icon Selection**: Book icons for library, target for goals, chart-line for analytics, plus for adding books, bookmark for current reading, user and sign-out for authentication
-- **Spacing**: Consistent 4-unit spacing (16px) between major elements, 2-unit (8px) for related items, 6-unit (24px) for section separation
-- **Mobile**: Single column layout on mobile with collapsible navigation, touch-friendly buttons (44px minimum), horizontal scroll for book carousels
+
+- **Components**: Card for auth forms, Button variants for different auth methods, Dialog for Google account selection, Avatar with image support, DropdownMenu for user profiles
+- **Customizations**: Google-styled button with proper branding, loading states for OAuth flow
+- **States**: Buttons show loading, disabled, and success states; forms handle validation errors gracefully
+- **Icon Selection**: GoogleLogo for OAuth buttons, User/SignOut for profile management
+- **Spacing**: Consistent 1rem padding with 0.5rem gaps using Tailwind's spacing scale
+- **Mobile**: Auth forms stack vertically, Google button maintains touch-friendly 44px height, responsive card layouts
