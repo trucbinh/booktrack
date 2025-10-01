@@ -111,7 +111,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     const userEntry = Object.values(usersRecord).find(
       entry => entry.user.email.toLowerCase() === email.toLowerCase() && 
-               entry.hashedPassword === hashedPassword
+               entry.hashedPassword === hashedPassword &&
+               entry.user.authProvider === 'email'
     );
 
     if (userEntry) {

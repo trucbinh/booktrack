@@ -25,8 +25,26 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleGoogleSignUp = async () => {
+    setIsGoogleLoading(true);
+    setErrors([]);
+
+    try {
+      const result = await loginWithGmail();
+      
+      if (!result.success) {
+        setErrors([result.error || 'Google sign up failed']);
+      }
+    } catch (error) {
+      setErrors(['An unexpected error occurred with Google sign up. Please try again.']);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -289,7 +307,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
             {isLoading ? 'Creating Account...' : 'Create Account'}
           </Button>
@@ -302,7 +320,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:underline"
               onClick={onToggleMode}
-              disabled={isLoading}
+              disabled={isLoading || isGoogleLoading}
             >
               Sign in here
             </Button>

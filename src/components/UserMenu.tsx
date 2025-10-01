@@ -42,6 +42,12 @@ export const UserMenu: React.FC = () => {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {user.authProvider === 'gmail' && (
+              <p className="text-xs leading-none text-muted-foreground flex items-center gap-1">
+                <GoogleLogo size={12} />
+                Connected via Google
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

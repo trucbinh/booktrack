@@ -21,6 +21,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +179,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </Button>
@@ -191,7 +192,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:underline"
               onClick={onToggleMode}
-              disabled={isLoading}
+              disabled={isLoading || isGoogleLoading}
             >
               Create one here
             </Button>
