@@ -55,8 +55,9 @@ export const calculateReadingStats = (
     return acc;
   }, {} as Record<string, number>);
 
-  const favoriteGenre = Object.entries(genreCounts).length > 0 
-    ? Object.entries(genreCounts).reduce((a, b) => 
+  const genreEntries = Object.entries(genreCounts);
+  const favoriteGenre = genreEntries.length > 0 
+    ? genreEntries.reduce((a, b) => 
         genreCounts[a[0]] > genreCounts[b[0]] ? a : b
       )[0] 
     : 'None';
