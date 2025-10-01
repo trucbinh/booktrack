@@ -55,9 +55,11 @@ export const calculateReadingStats = (
     return acc;
   }, {} as Record<string, number>);
 
-  const favoriteGenre = Object.entries(genreCounts).reduce((a, b) => 
-    genreCounts[a[0]] > genreCounts[b[0]] ? a : b
-  )?.[0] || 'None';
+  const favoriteGenre = Object.entries(genreCounts).length > 0 
+    ? Object.entries(genreCounts).reduce((a, b) => 
+        genreCounts[a[0]] > genreCounts[b[0]] ? a : b
+      )[0] 
+    : 'None';
 
   // Calculate reading streak (simplified)
   const today = new Date();
