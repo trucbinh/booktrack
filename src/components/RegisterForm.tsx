@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { BookOpen, Eye, EyeSlash } from '@phosphor-icons/react';
+import { Separator } from '@/components/ui/separator';
+import { BookOpen, Eye, EyeSlash, GoogleLogo } from '@phosphor-icons/react';
 import { validateEmail, validatePassword } from '@/lib/auth';
 
 interface RegisterFormProps {
@@ -13,7 +14,7 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
-  const { register } = useAuth();
+  const { register, loginWithGmail } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -32,6 +33,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors.length > 0) {
       setErrors([]);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setErrors([]);
+
+    try {
+      const result = await loginWithGmail();
+      
+      if (!result.success) {
+        setErrors([result.error || 'Google sign-in failed']);
+      }
+    } catch (error) {
+      setErrors(['An unexpected error occurred with Google sign-in. Please try again.']);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,7 +133,29 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       </CardHeader>
       
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full flex items-center justify-center gap-3 h-11"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+          >
+            <GoogleLogo size={20} className="text-blue-600" />
+            {isLoading ? 'Signing in...' : 'Continue with Google'}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <Separator className="w-full" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or create account with email</span>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {errors.length > 0 && (
             <Alert variant="destructive">
               <AlertDescription>

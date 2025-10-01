@@ -51,6 +51,9 @@ export interface User {
   firstName: string;
   lastName: string;
   createdAt: string;
+  authProvider?: 'email' | 'gmail';
+  avatar?: string;
+  googleId?: string;
   preferences: {
     dailyGoal: number;
     theme: 'light' | 'dark';

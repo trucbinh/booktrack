@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, SignOut, Gear } from '@phosphor-icons/react';
 import { formatUserDisplayName } from '@/lib/auth';
 
@@ -26,6 +26,9 @@ export const UserMenu: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
+            {user.avatar && (
+              <AvatarImage src={user.avatar} alt={displayName} />
+            )}
             <AvatarFallback className="bg-primary text-primary-foreground">
               {initials}
             </AvatarFallback>

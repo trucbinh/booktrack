@@ -2,9 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { User, AuthState } from '@/lib/types';
 import { hashPassword, createUser } from '@/lib/auth';
+import { GmailAuthService } from '@/lib/gmail-auth';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithGmail: () => Promise<{ success: boolean; error?: string }>;
   register: (userData: {
     email: string;
     username: string;
@@ -41,6 +43,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  const loginWithGmail = async (): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const gmailService = GmailAuthService.getInstance();
+      const googleUser = await gmailService.initiateGoogleSignIn();
+      const userData = await gmailService.processGoogleUser(googleUser);
+
+      // Check if user already exists by email or Google ID
+      const existingUserEntry = Object.values(usersRecord).find(
+        entry => entry.user.email.toLowerCase() === userData.email.toLowerCase() ||
+                 (entry.user.googleId && entry.user.googleId === userData.googleId)
+      );
+
+      if (existingUserEntry) {
+        // Update existing user with Gmail info if needed
+        const updatedUser = {
+          ...existingUserEntry.user,
+          authProvider: 'gmail' as const,
+          avatar: userData.avatar,
+          googleId: userData.googleId
+        };
+
+        setUsers(currentUsers => ({
+          ...(currentUsers || {}),
+          [existingUserEntry.user.id]: {
+            ...existingUserEntry,
+            user: updatedUser
+          }
+        }));
+
+        setCurrentUserId(existingUserEntry.user.id);
+        return { success: true };
+      } else {
+        // Create new user
+        const newUser = createUser({
+          email: userData.email,
+          username: userData.username,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          authProvider: 'gmail',
+          avatar: userData.avatar,
+          googleId: userData.googleId
+        });
+
+        setUsers(currentUsers => ({
+          ...(currentUsers || {}),
+          [newUser.id]: {
+            user: newUser,
+            hashedPassword: '' // No password needed for Gmail auth
+          }
+        }));
+
+        setCurrentUserId(newUser.id);
+        return { success: true };
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('cancelled')) {
+        return { success: false, error: 'Google sign-in was cancelled' };
+      }
+      return { success: false, error: 'Failed to sign in with Google' };
+    }
+  };
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const hashedPassword = await hashPassword(password);
@@ -128,6 +192,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: !!currentUser,
     isLoading,
     login,
+    loginWithGmail,
     register,
     logout,
     updateUser
