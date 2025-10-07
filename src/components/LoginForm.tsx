@@ -33,7 +33,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   };
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true);
+    setIsGoogleLoading(true);
     setErrors([]);
 
     try {
@@ -45,7 +45,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     } catch (error) {
       setErrors(['An unexpected error occurred with Google sign-in. Please try again.']);
     } finally {
-      setIsLoading(false);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -104,10 +104,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             variant="outline"
             className="w-full flex items-center justify-center gap-3 h-11"
             onClick={handleGoogleSignIn}
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
             <GoogleLogo size={20} className="text-blue-600" />
-            {isLoading ? 'Signing in...' : 'Continue with Google'}
+            {isGoogleLoading ? 'Signing in...' : 'Continue with Google'}
           </Button>
 
           <div className="relative">

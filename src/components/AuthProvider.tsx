@@ -44,75 +44,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const loginWithGmail = async (): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const gmailService = GmailAuthService.getInstance();
-      const googleUser = await gmailService.initiateGoogleSignIn();
-      const userData = await gmailService.processGoogleUser(googleUser);
-
-      // Check if user already exists by email or Google ID
-      const existingUserEntry = Object.values(usersRecord).find(
-        entry => entry.user.email.toLowerCase() === userData.email.toLowerCase() ||
-                 (entry.user.googleId && entry.user.googleId === userData.googleId)
-      );
-
-      if (existingUserEntry) {
-        // Update existing user with Gmail info if needed
-        const updatedUser = {
-          ...existingUserEntry.user,
-          authProvider: 'gmail' as const,
-          avatar: userData.avatar,
-          googleId: userData.googleId
-        };
-
-        setUsers(currentUsers => ({
-          ...(currentUsers || {}),
-          [existingUserEntry.user.id]: {
-            ...existingUserEntry,
-            user: updatedUser
-          }
-        }));
-
-        setCurrentUserId(existingUserEntry.user.id);
-        return { success: true };
-      } else {
-        // Create new user
-        const newUser = createUser({
-          email: userData.email,
-          username: userData.username,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          authProvider: 'gmail',
-          avatar: userData.avatar,
-          googleId: userData.googleId
-        });
-
-        setUsers(currentUsers => ({
-          ...(currentUsers || {}),
-          [newUser.id]: {
-            user: newUser,
-            hashedPassword: '' // No password needed for Gmail auth
-          }
-        }));
-
-        setCurrentUserId(newUser.id);
-        return { success: true };
-      }
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('cancelled')) {
-        return { success: false, error: 'Google sign-in was cancelled' };
-      }
-      return { success: false, error: 'Failed to sign in with Google' };
-    }
-  };
-
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const hashedPassword = await hashPassword(password);
     
     const userEntry = Object.values(usersRecord).find(
       entry => entry.user.email.toLowerCase() === email.toLowerCase() && 
-               entry.hashedPassword === hashedPassword &&
-               entry.user.authProvider === 'email'
+               entry.hashedPassword === hashedPassword
     );
 
     if (userEntry) {
@@ -165,6 +102,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     setCurrentUserId(newUser.id);
     return { success: true };
+  };
+
+  const loginWithGmail = async (): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const gmailAuth = GmailAuthService.getInstance();
+      const googleUser = await gmailAuth.initiateGoogleSignIn();
+      const userData = await gmailAuth.processGoogleUser(googleUser);
+
+      // Check if user already exists by email
+      const existingUserEntry = Object.values(usersRecord).find(
+        entry => entry.user.email.toLowerCase() === userData.email.toLowerCase()
+      );
+
+      if (existingUserEntry) {
+        // User exists, log them in
+        setCurrentUserId(existingUserEntry.user.id);
+        return { success: true };
+      } else {
+        // Create new user
+        const newUser = createUser({
+          email: userData.email,
+          username: userData.username,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          authProvider: userData.authProvider,
+          avatar: userData.avatar,
+          googleId: userData.googleId
+        });
+
+        // For Google users, we don't store a password hash
+        setUsers(currentUsers => ({
+          ...(currentUsers || {}),
+          [newUser.id]: {
+            user: newUser,
+            hashedPassword: '' // Google users don't have passwords
+          }
+        }));
+
+        setCurrentUserId(newUser.id);
+        return { success: true };
+      }
+    } catch (error) {
+      console.error('Gmail auth error:', error);
+      if (error instanceof Error && error.message === 'User cancelled Google sign in') {
+        return { success: false, error: 'Sign-in was cancelled' };
+      }
+      return { success: false, error: 'Google sign-in failed. Please try again.' };
+    }
   };
 
   const logout = () => {

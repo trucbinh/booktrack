@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, SignOut, Gear } from '@phosphor-icons/react';
+import { User, SignOut, Gear, GoogleLogo } from '@phosphor-icons/react';
 import { formatUserDisplayName } from '@/lib/auth';
 
 export const UserMenu: React.FC = () => {
